@@ -25,12 +25,12 @@ module FinalRedirectUrl
   end
 
   def self.get_final_redirect_url(url, limit = 10)
-    return url if limit <= 0
     uri = URI.parse(url)
-    response = ::Net::HTTP.get_response(uri)
+    return uri if limit <= 0
+    response = self.get_response(uri)
     if response.class == Net::HTTPOK
       return uri
-    elsif %{302 301}.include?(response.code)
+    elsif %w{302 301}.include?(response.code)
       redirect_location = response['location']
       location_uri = URI.parse(redirect_location)
       if location_uri.host.nil?
@@ -50,5 +50,14 @@ module FinalRedirectUrl
       url_str = url_str + "##{uri.fragment}"
     end
     url_str
+  end
+
+  def self.get_response(uri)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = (uri.port == 443)
+    http.ciphers = ['ALL']
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+   request = Net::HTTP::Get.new(uri.request_uri.to_s)
+    http.request(request)
   end
 end
