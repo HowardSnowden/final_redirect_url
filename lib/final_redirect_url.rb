@@ -30,7 +30,7 @@ module FinalRedirectUrl
     response = ::Net::HTTP.get_response(uri)
     if response.class == Net::HTTPOK
       return uri
-    else
+    elsif %{302 301}.include?(response.code)
       redirect_location = response['location']
       location_uri = URI.parse(redirect_location)
       if location_uri.host.nil?
@@ -38,6 +38,9 @@ module FinalRedirectUrl
       end
       warn "redirected to #{redirect_location}"
       get_final_redirect_url(redirect_location, limit - 1)
+    else 
+      warn "final redirect returned HTTP code: #{response.code}"
+      return uri
     end
   end
 
