@@ -57,7 +57,8 @@ module FinalRedirectUrl
     http.use_ssl = (uri.port == 443)
     http.ciphers = ['ALL']
     http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-   request = Net::HTTP::Get.new(uri.request_uri.to_s)
+    request = Net::HTTP::Get.new(uri.request_uri.to_s) 
+    request['User-Agent'] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
     http.request(request)
   end
 end
