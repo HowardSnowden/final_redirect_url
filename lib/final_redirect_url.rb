@@ -30,7 +30,7 @@ module FinalRedirectUrl
     response = self.get_response(uri)
     if response.class == Net::HTTPOK
       return uri
-    elsif %w{302 301}.include?(response.code)
+    elsif %w{302 301 308}.include?(response.code)
       redirect_location = response['location']
       location_uri = URI.parse(redirect_location)
       if location_uri.host.nil?
